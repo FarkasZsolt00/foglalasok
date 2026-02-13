@@ -179,6 +179,7 @@ namespace foglalasok
                             Console.Clear();
                             continue;
                         }
+                        Console.Clear();
                         if (valasz != "")
                         {
                             Console.WriteLine("Melyik adatot szeretné megváltoztatni?");
