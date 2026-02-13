@@ -148,38 +148,89 @@ namespace foglalasok
                 
                 if(szam == "2")
                 {
-                    Console.Write("Írja be a vendég számát(Amit a foglalásnál megadtunk): ");
-                    int bevitt = int.Parse(Console.ReadLine());
-                    var parancs = kapcsolat.CreateCommand();
-                    parancs.CommandText = $"Select nev, nem, telefonszam, szul, email, etkezes From sz_adatok Where id = {bevitt}";
-                    var olvas = parancs.ExecuteReader();
-                    while (olvas.Read())
+                    while (true)
                     {
-                        string nev = olvas.GetString(0);
-                        string nem = olvas.GetString(1);
-                        string telefonszam = olvas.GetString(2);
-                        DateTime szul = olvas.GetDateTime(3);
-                        string email = olvas.GetString(4);
-                        int etkezes = olvas.GetInt32(5);
-                        Console.Write("Név           "); Console.Write("Neme    "); Console.Write("Telefonszám    "); Console.Write("Születési dátum    "); Console.Write("Email címe           "); Console.WriteLine("Étkezés ");
-                        Console.Write(nev + "  " + nem + "   " + telefonszam + "    " + szul.Date.ToString("yyyy-MM-dd") + "         " + email + "      "); if (etkezes == 1) Console.Write("Igen"); if (etkezes == 2) Console.WriteLine("Nem");
+                        Console.Write("Írja be a vendég számát(Amit a foglalásnál megadtunk): ");
+                        int bevitt = int.Parse(Console.ReadLine());
+                        var parancs = kapcsolat.CreateCommand();
+                        parancs.CommandText = $"Select nev, nem, telefonszam, szul, email, etkezes From sz_adatok Where id = {bevitt}";
+                        var olvas = parancs.ExecuteReader();
+                        while (olvas.Read())
+                        {
+                            string nev = olvas.GetString(0);
+                            string nem = olvas.GetString(1);
+                            string telefonszam = olvas.GetString(2);
+                            DateTime szul = olvas.GetDateTime(3);
+                            string email = olvas.GetString(4);
+                            int etkezes = olvas.GetInt32(5);
+                            Console.Write("Név           "); Console.Write("Neme    "); Console.Write("Telefonszám    "); Console.Write("Születési dátum    "); Console.Write("Email címe           "); Console.WriteLine("Étkezés ");
+                            Console.Write(nev + "  " + nem + "   " + telefonszam + "    " + szul.Date.ToString("yyyy-MM-dd") + "         " + email + "      "); if (etkezes == 1) Console.Write("Igen"); if (etkezes == 2) Console.WriteLine("Nem");
 
 
 
+                        }
+                        Console.WriteLine("Ezek az adatok közül szeretné valamelyiket megváltoztatni (Ha nem akkor nyomjon egy ENTERT, ha igyen akkor üssön be bármilyen karaktert)");
+                        string valasz = Console.ReadLine();
+                        if (valasz == "")
+                        {
+                            Console.Clear();
+                            continue;
+                        }
+                        if (valasz != "")
+                        {
+                            Console.WriteLine("Melyik adatot szeretné megváltoztatni?");
+                            Console.WriteLine("1. Név");
+                            Console.WriteLine("2. Nem");
+                            Console.WriteLine("3. Telefonszám");
+                            Console.WriteLine("4. Születési dátum");
+                            Console.WriteLine("5. Email cím");
+                            Console.WriteLine("6. Étkezés");
+                            Console.Write("Válasszon a menüpontok közül: ");
+                            string szam2 = Console.ReadLine();
+                            if (szam2 == "1")
+                            {
+                                Console.Write("Írja be a új nevet: ");
+                                string ujnev = Console.ReadLine();
+                                var parancs2 = kapcsolat.CreateCommand();
+                                parancs2.CommandText = $"Update sz_adatok Set nev = '{ujnev}' Where id = {bevitt}";
+                                parancs2.ExecuteNonQuery();
+                                Console.Clear();
+                                continue;
+                            }
+                            if (szam2 == "2")
+                            {
+                                Console.Write("Írja be a új nemet: ");
+                                string ujnem = Console.ReadLine();
+                                var parancs2 = kapcsolat.CreateCommand();
+                                parancs2.CommandText = $"Update sz_adatok Set nem = '{ujnem}' Where id = {bevitt}";
+                                parancs2.ExecuteNonQuery();
+                                Console.Clear();
+                                continue;
+                            }
+                            if (szam2 == "3")
+                            {
+                                Console.Write("Írja be a új telefonszámot: ");
+                                string ujtelefonszam = Console.ReadLine();
+                                var parancs2 = kapcsolat.CreateCommand();
+                                parancs2.CommandText = $"Update sz_adatok Set telefonszam = '{ujtelefonszam}' Where id = {bevitt}";
+                                parancs2.ExecuteNonQuery();
+                                Console.Clear();
+                                continue;
+                            }
+                            if (szam2 == "4")
+                            {
+                                Console.Write("Írja be a új születési dátumot(ÉÉÉÉ-HH-NN): ");
+                                string ujszul = Console.ReadLine();
+                                var parancs2 = kapcsolat.CreateCommand();
+                                parancs2.CommandText = $"Update sz_adatok Set szul = '{ujszul}' Where id = {bevitt}";
+                                parancs2.ExecuteNonQuery();
+                                continue;
+                            }
+
+                        }
                     }
-                    Console.WriteLine("Ezek az adatok közül szeretné valamelyiket megváltoztatni (Ha nem akkor nyomjon egy N    )");
-
                 }
             }
-
-
-
-
-
-
-
-
-
             kapcsolat.Close();
             Console.ReadKey();
         }
