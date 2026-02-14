@@ -57,31 +57,34 @@ namespace foglalasok
                     var parancs = kapcsolat.CreateCommand();
                     parancs.CommandText = $"Select ferohely, allapot, ar from szobak";
                     var olvas = parancs.ExecuteReader();
-                    Console.Write("Férőhely     "); Console.Write("Állapot      "); Console.WriteLine("Ár");
-                    Console.WriteLine(" ");
+                    Console.Write("{0,-20} {1,-21}{2}", "Férőhely", "Állapot", "Ár");
+                    Console.WriteLine("\n ");
                     while (olvas.Read())
                     {
-                        int adat = olvas.GetInt32(0);
+                        int ferohely = olvas.GetInt32(0);
                         string allapot = olvas.GetString(1);
                         int ar = olvas.GetInt32(2);
 
-                        Console.WriteLine("   " + adat + "         " + allapot + "      " + ar);
+                        Console.WriteLine("   {0,-18}{1,-20}{2}",  ferohely, allapot, ar);
                     }
                     olvas.Close();
                 }
+            
 
                 if (szam != "")
                 {
                     var parancs = kapcsolat.CreateCommand();
                     parancs.CommandText = $"Select ferohely, allapot, ar from szobak where szobaszam = {szam}";
                     var olvas = parancs.ExecuteReader();
-                    Console.Write("Férőhely     "); Console.Write("Állapot      "); Console.WriteLine("Ár");
+                    Console.Write("{0,-20} {1,-21}{2}", "Férőhely", "Állapot", "Ár");
+                    Console.WriteLine(" ");
                     while (olvas.Read())
                     {
-                        int adat = olvas.GetInt32(0);
+                        int ferohely = olvas.GetInt32(0);
                         string allapot = olvas.GetString(1);
                         int ar = olvas.GetInt32(2);
-                        Console.WriteLine("   " + adat + "         " + allapot + "      " + ar);
+
+                        Console.WriteLine("   {0,-18}{1,-20}{2}", ferohely, allapot, ar);
                     }
                     olvas.Close();
                 }
