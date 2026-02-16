@@ -12,7 +12,7 @@ namespace foglalasok
     {
         static void Main(string[] args)
         {
-            
+
             while (true)
             {
                 MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder()
@@ -270,74 +270,91 @@ namespace foglalasok
                 }
                 if (sorszam == 3)
                 {
-                    Console.WriteLine("Foglalás vagy foglalás törlése:");
-                    Console.WriteLine("Ha vissza szeretne lépni a menübe nyomja meg a Q betűt.");
-                    Console.WriteLine("1. Foglalás");
-                    Console.WriteLine("2. Foglalás törlése");
-                    Console.Write("Válasszon a menüpontok közül: ");
-                    string szam = Console.ReadLine();
-                    szam = szam.ToLower();
-                    if (szam == "q")
+                    string szam = "";
+                    while (true)
                     {
-                        Console.Clear();
-                        continue;
-                    }
-                    if (szam == "1")
-                    {
-                        Console.Clear();
+                        Console.WriteLine("Foglalás vagy foglalás törlése:");
+                        Console.WriteLine("Ha vissza szeretne lépni a menübe nyomja meg a Q betűt.");
                         Console.WriteLine("1. Foglalás");
-                        var parancs = kapcsolat.CreateCommand();
-                        parancs.CommandText = $"Select szobaszam, ferohely, allapot, ar from szobak WHERE allapot = 'üres'";
-                        var olvas = parancs.ExecuteReader();
-                        Console.WriteLine("{0,-20} {1,-20}{2, -21}{3}", "Szobaszám", "Férőhely", "Állapot", "Ár");
-                        while (olvas.Read())
+                        Console.WriteLine("2. Foglalás törlése");
+                        Console.Write("Válasszon a menüpontok közül: ");
+                        szam = Console.ReadLine();
+                        szam = szam.ToLower();
+                        if (szam == "q")
                         {
-                            int szobaszam = olvas.GetInt32(0);
-                            int ferohely = olvas.GetInt32(1);
-                            string allapot = olvas.GetString(2);
-                            int ar = olvas.GetInt32(3);
+                            Console.Clear();
+                            continue;
+                        }
+                        if (szam == "1")
+                        {
+                            Console.Clear();
+                            Console.WriteLine("1. Foglalás");
+                            var parancs = kapcsolat.CreateCommand();
+                            parancs.CommandText = $"Select szobaszam, ferohely, allapot, ar from szobak WHERE allapot = 'üres'";
+                            var olvas = parancs.ExecuteReader();
+                            Console.WriteLine("{0,-20} {1,-20}{2, -21}{3}", "Szobaszám", "Férőhely", "Állapot", "Ár");
+                            while (olvas.Read())
+                            {
+                                int szobaszam = olvas.GetInt32(0);
+                                int ferohely = olvas.GetInt32(1);
+                                string allapot = olvas.GetString(2);
+                                int ar = olvas.GetInt32(3);
 
-                            Console.WriteLine("   {0,-21}{1,-18}{2, -20}{3}", szobaszam, ferohely, allapot, ar);
+                                Console.WriteLine("   {0,-21}{1,-18}{2, -20}{3}", szobaszam, ferohely, allapot, ar);
+                            }
+                            olvas.Close();
+                            try
+                            {
+                                Console.Write("Írja be a lefoglalni kívánt szobának a számát: ");
+                                int szam2 = int.Parse(Console.ReadLine());
+                                Console.Write("Kérem a foglaláshoz tartozó nevet: ");
+                                string nev = Console.ReadLine();
+                                Console.Write("Kérem a foglaláshoz tartozó telefonszámot: ");
+                                string telefonszam = Console.ReadLine();
+                                Console.Write("Kérem a nemét: ");
+                                string nem = Console.ReadLine().ToLower();
+                                Console.Write("Kérem a születési dátumát(Kötöjelekkel elválasztva Pl.: 1999-01-02): ");
+                                string szul = Console.ReadLine();
+                                Console.Write("Kérem az email címét: ");
+                                string email = Console.ReadLine().ToLower();
+                                Console.Write("Kér-e étkezést (Írjon 1-est ha igen, 2-est ha nem): ");
+                                int etkezes = int.Parse(Console.ReadLine());
+                                Console.WriteLine("Adja meg a fizetési módot(Készpénz/Bankártya): ");
+                                string fizetes = Console.ReadLine().ToLower();
+                                var parancs3 = kapcsolat.CreateCommand();
+                                parancs3.CommandText = $"Select id from sz_adatok order by id desc limit 1";
+                                var olvas2 = parancs3.ExecuteReader();
+                                int id = 0;
+                                while (olvas2.Read())
+                                {
+                                    id = olvas2.GetInt32(0);
+                                }
+                                olvas.Close();
+                                var parancs4 = kapcsolat.CreateCommand();
+                                parancs4.CommandText = $"Insert Into sz_adatok (id, nev, nem, telefonszam, szul, email, etkezes) Values ('{id += 1}','{nev}', '{nem}', '{telefonszam}', '{szul}', '{email}', {etkezes}, {fizetes})";
+                                parancs4.ExecuteNonQuery();
+                                var parancs2 = kapcsolat.CreateCommand();
+                                parancs2.CommandText = $"Update szobak Set allapot = 'foglalt' Where szobaszam = {szam2}";
+                                parancs2.ExecuteNonQuery();
+                                Console.Write("Adja meg a foglalás kezdetét(Pl.: 2000-01-01): ");
+                                string kezdet = Console.ReadLine();
+                                Console.Write("Aja meg a távozás napját(Pl.: 2000-01-02): ");
+                                string veg = Console.ReadLine();
+                                var parancs5 = kapcsolat.CreateCommand();
+                                parancs5.CommandText = $"Insert Into foglalas (szobaszam, vendeg_id, erkezes, tavozas) Values ({szam2}, {id}, '{kezdet}', '{veg}')";
+                                parancs5.ExecuteNonQuery();
+                            }
+                            catch (Exception)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("A foglalas sikertelen");
+                                continue;
+                            }
+                            Console.Clear();
+                            Console.WriteLine("A foglalas sikeres");
+                            break;
                         }
-                        olvas.Close();
-                        Console.Write("Írja be a lefoglalni kívánt szobának a számát: ");
-                        int szam2 = int.Parse(Console.ReadLine());
-                        Console.Write("Kérem a foglaláshoz tartozó nevet: ");
-                        string nev = Console.ReadLine();
-                        Console.Write("Kérem a foglaláshoz tartozó telefonszámot: ");
-                        string telefonszam = Console.ReadLine();
-                        Console.Write("Kérem a nemét: ");
-                        string nem = Console.ReadLine().ToLower();
-                        Console.Write("Kérem a születési dátumát(Kötöjelekkel elválasztva Pl.: 1999-01-02): ");
-                        string szul = Console.ReadLine();
-                        Console.Write("Kérem az email címét: ");
-                        string email = Console.ReadLine().ToLower();
-                        Console.Write("Kér-e étkezést (Írjon 1-est ha igen, 2-est ha nem): ");
-                        int etkezes = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Adja meg a fizetési módot(Készpénz/Bankártya): ");
-                        string fizetes = Console.ReadLine().ToLower();
-                        var parancs3 = kapcsolat.CreateCommand();
-                        parancs3.CommandText = $"Select id from sz_adatok order by id desc limit 1";
-                        var olvas2 = parancs3.ExecuteReader();
-                        int id = 0;
-                        while (olvas2.Read())
-                        {
-                            id = olvas2.GetInt32(0);
-                        }
-                        olvas.Close();
-                        var parancs4 = kapcsolat.CreateCommand();
-                        parancs4.CommandText = $"Insert Into sz_adatok (id, nev, nem, telefonszam, szul, email, etkezes) Values ('{id += 1}','{nev}', '{nem}', '{telefonszam}', '{szul}', '{email}', {etkezes}, {fizetes})";
-                        parancs4.ExecuteNonQuery();
-                        var parancs2 = kapcsolat.CreateCommand();
-                        parancs2.CommandText = $"Update szobak Set allapot = 'foglalt' Where szobaszam = {szam2}";
-                        parancs2.ExecuteNonQuery();
-                        Console.Write("Adja meg a foglalás kezdetét(Pl.: 2000-01-01): ");
-                        string kezdet = Console.ReadLine();
-                        Console.Write("Aja meg a távozás napját(Pl.: 2000-01-02): ");
-                        string veg = Console.ReadLine();
-                        var parancs5 = kapcsolat.CreateCommand();
-                        parancs5.CommandText = $"Insert Into foglalas (szobaszam, vendeg_id, erkezes, tavozas) Values ({szam2}, {id}, '{kezdet}', '{veg}')";
-                        parancs5.ExecuteNonQuery();
+
                         Console.WriteLine("\n");
                         Console.WriteLine("Ha vissza szeretne lépni a menübe nyomja meg az ENTER-t");
                         string menü = Console.ReadLine();
@@ -466,7 +483,7 @@ namespace foglalasok
                 kapcsolat.Close();
                 Console.ReadKey();
             }
-            
+
         }
     }
 }
