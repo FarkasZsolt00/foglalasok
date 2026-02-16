@@ -319,7 +319,7 @@ namespace foglalasok
                                 string email = Console.ReadLine().ToLower();
                                 Console.Write("Kér-e étkezést (Írjon 1-est ha igen, 2-est ha nem): ");
                                 int etkezes = int.Parse(Console.ReadLine());
-                                Console.WriteLine("Adja meg a fizetési módot(Készpénz/Bankártya): ");
+                                Console.Write("Adja meg a fizetési módot(Készpénz/Bankártya): ");
                                 string fizetes = Console.ReadLine().ToLower();
                                 var parancs3 = kapcsolat.CreateCommand();
                                 parancs3.CommandText = $"Select id from sz_adatok order by id desc limit 1";
